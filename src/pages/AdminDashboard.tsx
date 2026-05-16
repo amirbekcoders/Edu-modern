@@ -23,6 +23,7 @@ export default function AdminDashboard() {
   const [users, setUsers] = useState<User[]>([]);
   const [courses, setCourses] = useState<Course[]>([]);
   const [teachers, setTeachers] = useState<Teacher[]>([]);
+  const [stats, setStats] = useState({ users: 0, courses: 0 });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -34,24 +35,28 @@ export default function AdminDashboard() {
     setLoading(true);
     setError(null);
     try {
-      const [usersRes, coursesRes, teachersRes] = await Promise.all([
-        supabase.from('profiles').select('*').order('created_at', { ascending: false }),
-        supabase.from('courses').select('*').order('created_at', { ascending: false }),
-        supabase.from('teachers').select('*, user:profiles(*)').order('created_at', { ascending: false })
-      ]);
-
-      if (usersRes.error) throw usersRes.error;
-      if (coursesRes.error && coursesRes.error.code !== '42P01') {
-        // 42P01 is relation does not exist, ignore if table missing
-        throw coursesRes.error;
+      if (activeTab === 'overview') {
+        const [usersRes, coursesRes] = await Promise.all([
+          supabase.from('profiles').select('*', { count: 'exact', head: true }),
+          supabase.from('courses').select('*', { count: 'exact', head: true })
+        ]);
+        setStats({
+          users: usersRes.count || 0,
+          courses: coursesRes.count || 0
+        });
+      } else if (activeTab === 'users') {
+        const { data, error } = await supabase.from('profiles').select('*').order('created_at', { ascending: false }).limit(1000);
+        if (error) throw error;
+        setUsers(data as User[] || []);
+      } else if (activeTab === 'courses') {
+        const { data, error } = await supabase.from('courses').select('*').order('created_at', { ascending: false }).limit(1000);
+        if (error && error.code !== '42P01') throw error;
+        setCourses(data as Course[] || []);
+      } else if (activeTab === 'teachers') {
+        const { data, error } = await supabase.from('teachers').select('*, user:profiles(*)').order('created_at', { ascending: false }).limit(1000);
+        if (error && error.code !== '42P01') throw error;
+        setTeachers((data as Teacher[]) || []);
       }
-      if (teachersRes.error && teachersRes.error.code !== '42P01') {
-        throw teachersRes.error;
-      }
-
-      setUsers(usersRes.data as User[] || []);
-      setCourses(coursesRes.data as Course[] || []);
-      setTeachers((teachersRes.data as Teacher[]) || []);
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message || 'Failed to fetch data. Make sure tables exist.');
@@ -61,7 +66,7 @@ export default function AdminDashboard() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [activeTab]);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -180,7 +185,7 @@ export default function AdminDashboard() {
                         </div>
                       </div>
                       <p className="text-sm text-textMuted">Total Users</p>
-                      <p className="text-2xl font-bold">{users.length}</p>
+                      <p className="text-2xl font-bold">{stats.users}</p>
                     </div>
                     <div className="glass-card p-6 border-white/5">
                       <div className="flex items-center justify-between mb-4">
@@ -189,7 +194,7 @@ export default function AdminDashboard() {
                         </div>
                       </div>
                       <p className="text-sm text-textMuted">Total Courses</p>
-                      <p className="text-2xl font-bold">{courses.length}</p>
+                      <p className="text-2xl font-bold">{stats.courses}</p>
                     </div>
                   </div>
                 </div>
