@@ -8,30 +8,30 @@ import type { Teacher } from '../types';
 const MOCK_TEACHERS = [
   {
     id: '1',
-    user_id: 'u1',
+    full_name: 'Sarah Drasner',
+    avatar_url: 'https://i.pravatar.cc/150?u=sarah',
     bio: 'Senior Developer Advocate, formerly at Netlify and Microsoft. Vue Core Team member and React expert.',
     experience_years: 12,
     rating: 4.9,
-    created_at: new Date().toISOString(),
-    user: { id: 'u1', email: 'sarah@example.com', full_name: 'Sarah Drasner', role: 'teacher' as "teacher", avatar_url: 'https://i.pravatar.cc/150?u=sarah' }
+    created_at: new Date().toISOString()
   },
   {
     id: '2',
-    user_id: 'u2',
+    full_name: 'Gary Simon',
+    avatar_url: 'https://i.pravatar.cc/150?u=gary',
     bio: 'UI/UX Designer and Frontend Developer with a passion for creating beautiful digital experiences.',
     experience_years: 15,
     rating: 4.8,
-    created_at: new Date().toISOString(),
-    user: { id: 'u2', email: 'gary@example.com', full_name: 'Gary Simon', role: 'teacher' as "teacher", avatar_url: 'https://i.pravatar.cc/150?u=gary' }
+    created_at: new Date().toISOString()
   },
   {
     id: '3',
-    user_id: 'u3',
+    full_name: 'Lee Robinson',
+    avatar_url: 'https://i.pravatar.cc/150?u=lee',
     bio: 'VP of Developer Experience at Vercel. Creator of Next.js tutorials and full-stack architecture guides.',
     experience_years: 10,
     rating: 5.0,
-    created_at: new Date().toISOString(),
-    user: { id: 'u3', email: 'lee@example.com', full_name: 'Lee Robinson', role: 'teacher' as "teacher", avatar_url: 'https://i.pravatar.cc/150?u=lee' }
+    created_at: new Date().toISOString()
   }
 ];
 
@@ -48,7 +48,7 @@ export default function Teachers() {
       try {
         const { data, error } = await supabase
           .from('teachers')
-          .select('*, user:profiles(*)');
+          .select('*');
 
         if (error || !data || data.length === 0) {
           setTeachers(MOCK_TEACHERS as unknown as Teacher[]);
@@ -94,13 +94,13 @@ export default function Teachers() {
               <div className="relative mb-6">
                 <div className="absolute inset-0 bg-gradient-to-tr from-primary to-secondary rounded-full blur-md opacity-50 group-hover:opacity-100 transition-opacity"></div>
                 <img 
-                  src={teacher.user?.avatar_url || `https://ui-avatars.com/api/?name=${teacher.user?.full_name}&background=random`} 
-                  alt={teacher.user?.full_name} 
+                  src={teacher.avatar_url || `https://ui-avatars.com/api/?name=${teacher.full_name}&background=random`} 
+                  alt={teacher.full_name} 
                   className="w-32 h-32 rounded-full object-cover relative z-10 border-4 border-surface"
                 />
               </div>
               
-              <h3 className="text-2xl font-bold mb-1 group-hover:text-primary transition-colors">{teacher.user?.full_name}</h3>
+              <h3 className="text-2xl font-bold mb-1 group-hover:text-primary transition-colors">{teacher.full_name}</h3>
               
               <div className="flex items-center justify-center gap-4 text-sm font-medium mb-4">
                 <span className="flex items-center gap-1 text-warning">

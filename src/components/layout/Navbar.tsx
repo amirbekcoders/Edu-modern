@@ -1,7 +1,7 @@
 
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import { BookOpen, LogOut, LayoutDashboard, Globe } from 'lucide-react';
+import { BookOpen, LogOut, LayoutDashboard, Globe, User } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 export const Navbar = () => {
@@ -50,8 +50,17 @@ export const Navbar = () => {
           {user ? (
             <div className="flex items-center gap-4">
               <Link to={user.role === 'admin' ? '/admin' : '/dashboard'} className="btn-outline !py-2 !px-4 text-sm">
-                <LayoutDashboard className="w-4 h-4" />
-                Dashboard
+                {user.role === 'admin' ? (
+                  <>
+                    <LayoutDashboard className="w-4 h-4" />
+                    Admin Panel
+                  </>
+                ) : (
+                  <>
+                    <User className="w-4 h-4" />
+                    Profile
+                  </>
+                )}
               </Link>
               <button onClick={signOut} className="text-textMuted hover:text-danger transition-colors">
                 <LogOut className="w-5 h-5" />

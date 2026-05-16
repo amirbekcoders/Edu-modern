@@ -18,12 +18,12 @@ export interface Subject {
 
 export interface Teacher {
   id: string;
-  user_id: string;
+  full_name: string;
+  avatar_url: string;
   bio: string;
   experience_years: number;
   rating: number;
   created_at: string;
-  user?: User;
 }
 
 export interface Course {
@@ -31,10 +31,12 @@ export interface Course {
   title: string;
   description: string;
   thumbnail_url: string;
+  video_url?: string;
+  category?: string;
+  lessons?: { id: string; title: string; video_url: string; duration?: string }[];
   subject_id: string;
   teacher_id: string;
   price: number;
-  language?: 'uz' | 'ru' | 'en'; // Language of the course
   created_at: string;
   teacher?: Teacher;
   subject?: Subject;
