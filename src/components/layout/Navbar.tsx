@@ -1,11 +1,17 @@
 
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import { BookOpen, LogOut, LayoutDashboard } from 'lucide-react';
+import { BookOpen, LogOut, LayoutDashboard, Globe } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export const Navbar = () => {
   const { user, signOut } = useAuth();
   const location = useLocation();
+  const { i18n } = useTranslation();
+
+  const changeLanguage = (lng: string) => {
+    i18n.changeLanguage(lng);
+  };
 
 
   return (
@@ -30,6 +36,17 @@ export const Navbar = () => {
         </div>
 
         <div className="flex items-center gap-4">
+          <div className="relative group/lang flex items-center">
+            <button className="flex items-center gap-1 text-textMuted hover:text-primary transition-colors text-sm font-medium">
+              <Globe className="w-4 h-4" />
+              {i18n.language?.toUpperCase() || 'RU'}
+            </button>
+            <div className="absolute top-full right-0 mt-2 w-32 bg-surface border border-white/10 rounded-xl shadow-lg opacity-0 invisible group-hover/lang:opacity-100 group-hover/lang:visible transition-all z-50 overflow-hidden">
+              <button onClick={() => changeLanguage('uz')} className="w-full text-left px-4 py-2 text-sm hover:bg-white/5 transition-colors">O'zbek</button>
+              <button onClick={() => changeLanguage('ru')} className="w-full text-left px-4 py-2 text-sm hover:bg-white/5 transition-colors">Русский</button>
+              <button onClick={() => changeLanguage('en')} className="w-full text-left px-4 py-2 text-sm hover:bg-white/5 transition-colors">English</button>
+            </div>
+          </div>
           {user ? (
             <div className="flex items-center gap-4">
               <Link to={user.role === 'admin' ? '/admin' : '/dashboard'} className="btn-outline !py-2 !px-4 text-sm">

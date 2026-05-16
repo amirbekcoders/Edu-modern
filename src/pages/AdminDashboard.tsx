@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
+import { useTranslation } from 'react-i18next';
 import { 
   Users, BookOpen, 
   BarChart3, Plus,
@@ -8,15 +9,17 @@ import {
 } from 'lucide-react';
 import type { Course, User, Teacher } from '../types';
 
-const TABS = [
-  { id: 'overview', label: 'Overview', icon: BarChart3 },
-  { id: 'users', label: 'Users', icon: Users },
-  { id: 'courses', label: 'Courses', icon: BookOpen },
-  { id: 'teachers', label: 'Teachers', icon: Users },
-];
-
 export default function AdminDashboard() {
   const { user } = useAuth();
+  const { t } = useTranslation();
+  
+  const TABS = [
+    { id: 'overview', label: t('Overview'), icon: BarChart3 },
+    { id: 'users', label: t('Users'), icon: Users },
+    { id: 'courses', label: t('Courses'), icon: BookOpen },
+    { id: 'teachers', label: t('Teachers'), icon: Users },
+  ];
+
   const [activeTab, setActiveTab] = useState('overview');
   
   // Data states
@@ -30,6 +33,7 @@ export default function AdminDashboard() {
   // Form states
   const [isCourseModalOpen, setIsCourseModalOpen] = useState(false);
   const [editingCourse, setEditingCourse] = useState<Partial<Course>>({});
+  const [modalError, setModalError] = useState<string | null>(null);
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -117,8 +121,12 @@ export default function AdminDashboard() {
       }
       setIsCourseModalOpen(false);
       setEditingCourse({});
+      setModalError(null);
     } catch (err: unknown) {
-      if (err instanceof Error) alert(err.message);
+      if (err instanceof Error) {
+        setModalError(err.message);
+        console.error("Save course error:", err);
+      }
     }
   };
 
@@ -128,8 +136,8 @@ export default function AdminDashboard() {
       <div className="w-full md:w-64 flex-shrink-0">
         <div className="glass-panel p-6 sticky top-24">
           <div className="mb-8">
-            <h2 className="text-xl font-bold font-display">Admin Panel</h2>
-            <p className="text-sm text-textMuted">Welcome, {user?.full_name}</p>
+            <h2 className="text-xl font-bold font-display">{t('Admin Panel')}</h2>
+            <p className="text-sm text-textMuted">{t('Welcome Back')}, {user?.full_name}</p>
           </div>
           
           <nav className="space-y-2">
@@ -173,9 +181,9 @@ export default function AdminDashboard() {
               {activeTab === 'overview' && (
                 <div className="space-y-8">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-2xl font-bold font-display">Platform Overview</h3>
+                    <h3 className="text-2xl font-bold font-display">{t('Platform Overview')}</h3>
                     <button onClick={fetchData} className="btn-outline !py-2 !px-4 text-sm">
-                      Refresh Data
+                      {t('Refresh Data')}
                     </button>
                   </div>
                   
@@ -347,12 +355,18 @@ export default function AdminDashboard() {
         <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="glass-panel w-full max-w-md p-6 relative">
             <button 
-              onClick={() => setIsCourseModalOpen(false)}
+              onClick={() => { setIsCourseModalOpen(false); setModalError(null); }}
               className="absolute top-4 right-4 text-textMuted hover:text-white"
             >
               <X className="w-5 h-5" />
             </button>
             <h3 className="text-xl font-bold mb-6">{editingCourse.id ? 'Edit Course' : 'New Course'}</h3>
+            
+            {modalError && (
+              <div className="bg-danger/10 border border-danger/20 text-danger px-4 py-3 rounded-xl mb-6 text-sm">
+                {modalError}
+              </div>
+            )}
             
             <div className="space-y-4">
               <div>
