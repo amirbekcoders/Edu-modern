@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { Mail, Lock, User as UserIcon, Loader } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export default function Register() {
   const [fullName, setFullName] = useState('');
@@ -10,6 +11,7 @@ export default function Register() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -66,8 +68,8 @@ export default function Register() {
         <div className="absolute bottom-[-50px] left-[-50px] w-[100px] h-[100px] bg-secondary/30 blur-[40px] rounded-full pointer-events-none" />
         
         <div className="text-center mb-8 relative z-10">
-          <h1 className="text-3xl font-display font-bold mb-2">Create Account</h1>
-          <p className="text-textMuted text-sm">Join Anti Gravity Academy today.</p>
+          <h1 className="text-3xl font-display font-bold mb-2">{t("Create Account")}</h1>
+          <p className="text-textMuted text-sm">{t("Join Albion Physics today.")}</p>
         </div>
 
         {error && (
@@ -78,7 +80,7 @@ export default function Register() {
 
         <form onSubmit={handleRegister} className="space-y-6 relative z-10">
           <div className="space-y-2">
-            <label className="text-sm font-medium text-textMuted">Full Name</label>
+            <label className="text-sm font-medium text-textMuted">{t("Full Name")}</label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                 <UserIcon className="w-5 h-5 text-textMuted/50" />
@@ -95,7 +97,7 @@ export default function Register() {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-textMuted">Email Address</label>
+            <label className="text-sm font-medium text-textMuted">{t("Email Address")}</label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                 <Mail className="w-5 h-5 text-textMuted/50" />
@@ -112,7 +114,7 @@ export default function Register() {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-textMuted">Password</label>
+            <label className="text-sm font-medium text-textMuted">{t("Password")}</label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                 <Lock className="w-5 h-5 text-textMuted/50" />
@@ -130,14 +132,14 @@ export default function Register() {
           </div>
 
           <button type="submit" disabled={loading} className="btn-primary w-full">
-            {loading ? <Loader className="w-5 h-5 animate-spin" /> : 'Sign Up'}
+            {loading ? <Loader className="w-5 h-5 animate-spin" /> : t('Sign Up')}
           </button>
         </form>
 
         <p className="text-center text-sm text-textMuted mt-8 relative z-10">
-          Already have an account?{' '}
+          {t("Already have an account?")}{' '}
           <Link to="/login" className="text-primary hover:text-white transition-colors font-medium">
-            Log in
+            {t("Log in")}
           </Link>
         </p>
       </div>

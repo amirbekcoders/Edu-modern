@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Star, Clock, BookOpen } from 'lucide-react';
 import { useSettings } from '../contexts/SettingsContext';
+import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabase';
 import type { Course } from '../types';
 
@@ -21,7 +22,7 @@ const MOCK_COURSES = [
 ];
 
 export default function Courses() {
-  const { t } = useSettings();
+  const { t } = useTranslation();
   const [activeCategory, setActiveCategory] = useState('all');
   const [courses, setCourses] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);

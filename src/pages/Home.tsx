@@ -1,5 +1,6 @@
 
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Rocket, BookOpen, Brain, Shield, PenTool, Monitor } from 'lucide-react';
 
 const subjects = [
@@ -12,6 +13,7 @@ const subjects = [
 ];
 
 export default function Home() {
+  const { t } = useTranslation();
   return (
     <div className="flex flex-col items-center">
       {/* Hero Section */}
@@ -19,22 +21,22 @@ export default function Home() {
         <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5 pointer-events-none"></div>
         
         <h1 className="text-5xl md:text-7xl font-display font-bold mb-6 tracking-tight">
-          Master the Future with
+          {t("Master the Future with")}
           <span className="block text-transparent bg-clip-text bg-gradient-to-r from-primary via-secondary to-accent mt-2">
-            Anti Gravity Academy
+            Albion Physics
           </span>
         </h1>
         
         <p className="text-lg md:text-xl text-textMuted max-w-2xl mb-10">
-          A premium educational platform offering cutting-edge courses in tech, design, and beyond. Step into the next generation of learning.
+          {t("A premium educational platform offering cutting-edge courses in tech, design, and beyond. Step into the next generation of learning.")}
         </p>
         
         <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
           <Link to="/courses" className="btn-primary text-lg">
-            Explore Courses
+            {t("Explore Courses")}
           </Link>
           <Link to="/register" className="btn-outline text-lg">
-            Join for Free
+            {t("Join for Free")}
           </Link>
         </div>
       </section>
@@ -43,10 +45,10 @@ export default function Home() {
       <section className="w-full py-20">
         <div className="flex items-center justify-between mb-12">
           <h2 className="text-3xl md:text-4xl font-display font-bold">
-            Popular <span className="text-primary">Subjects</span>
+            {t("Popular")} <span className="text-primary">{t("Subjects")}</span>
           </h2>
           <Link to="/subjects" className="text-accent hover:text-white transition-colors">
-            View all &rarr;
+            {t("View all")} &rarr;
           </Link>
         </div>
 
@@ -58,9 +60,9 @@ export default function Home() {
                 <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${subject.color} flex items-center justify-center mb-6 shadow-lg group-hover:scale-110 transition-transform`}>
                   <Icon className="w-7 h-7 text-white" />
                 </div>
-                <h3 className="text-xl font-bold mb-2 group-hover:text-primary transition-colors">{subject.name}</h3>
+                <h3 className="text-xl font-bold mb-2 group-hover:text-primary transition-colors">{t(subject.name)}</h3>
                 <p className="text-textMuted text-sm">
-                  Master {subject.name.toLowerCase()} with industry experts and practical lessons.
+                  {t("Master")} {t(subject.name.toLowerCase())} {t("with industry experts and practical lessons.")}
                 </p>
               </div>
             );

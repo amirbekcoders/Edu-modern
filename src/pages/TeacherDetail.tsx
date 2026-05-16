@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useNavigate, Link, useLocation } from 'react-router-dom';
 import { Star, BookOpen, ArrowLeft, Calendar } from 'lucide-react';
 import { useSettings } from '../contexts/SettingsContext';
+import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabase';
+import { useAuth } from '../contexts/AuthContext';
 import type { Course, Teacher } from '../types';
 
 const MOCK_TEACHERS = [
@@ -61,7 +63,17 @@ const MOCK_COURSES: Course[] = [
 export default function TeacherDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { t } = useSettings();
+  const { t } = useTranslation();
+  const location = useLocation();
+  const { user } = useAuth();
+
+  const handleAuthRequiredAction = (action: () => void) => {
+    if (!user) {
+      navigate('/register', { state: { from: location } });
+      return;
+    }
+    action();
+  };
   
   const [teacher, setTeacher] = useState<Teacher | null>(null);
   const [courses, setCourses] = useState<Course[]>([]);
@@ -174,7 +186,7 @@ export default function TeacherDetail() {
               </p>
 
               <div className="pt-6 mt-6 border-t border-white/10 flex gap-4 justify-center md:justify-start">
-                <button className="btn-primary">
+                <button onClick={() => handleAuthRequiredAction(() => alert("Booking functionality coming soon"))} className="btn-primary">
                   {t('book_session')}
                 </button>
               </div>

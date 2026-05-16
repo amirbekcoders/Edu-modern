@@ -3,6 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
 import { Mail, Lock, Loader } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -13,6 +14,7 @@ export default function Login() {
   const navigate = useNavigate();
   const location = useLocation();
   const { user } = useAuth();
+  const { t } = useTranslation();
 
   // Handle redirect if user is already logged in or after successful login
   useEffect(() => {
@@ -51,8 +53,8 @@ export default function Login() {
         <div className="absolute top-[-50px] right-[-50px] w-[100px] h-[100px] bg-primary/30 blur-[40px] rounded-full pointer-events-none" />
         
         <div className="text-center mb-8 relative z-10">
-          <h1 className="text-3xl font-display font-bold mb-2">Welcome Back</h1>
-          <p className="text-textMuted text-sm">Log in to continue your learning journey.</p>
+          <h1 className="text-3xl font-display font-bold mb-2">{t("Welcome Back")}</h1>
+          <p className="text-textMuted text-sm">{t("Log in to continue your learning journey.")}</p>
         </div>
 
         {error && (
@@ -63,7 +65,7 @@ export default function Login() {
 
         <form onSubmit={handleLogin} className="space-y-6 relative z-10">
           <div className="space-y-2">
-            <label className="text-sm font-medium text-textMuted">Email Address</label>
+            <label className="text-sm font-medium text-textMuted">{t("Email Address")}</label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                 <Mail className="w-5 h-5 text-textMuted/50" />
@@ -81,9 +83,9 @@ export default function Login() {
 
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <label className="text-sm font-medium text-textMuted">Password</label>
+              <label className="text-sm font-medium text-textMuted">{t("Password")}</label>
               <Link to="/forgot-password" className="text-xs text-primary hover:text-primaryHover transition-colors">
-                Forgot password?
+                {t("Forgot password?")}
               </Link>
             </div>
             <div className="relative">
@@ -102,14 +104,14 @@ export default function Login() {
           </div>
 
           <button type="submit" disabled={loading} className="btn-primary w-full">
-            {loading ? <Loader className="w-5 h-5 animate-spin" /> : 'Sign In'}
+            {loading ? <Loader className="w-5 h-5 animate-spin" /> : t('Sign In')}
           </button>
         </form>
 
         <p className="text-center text-sm text-textMuted mt-8 relative z-10">
-          Don't have an account?{' '}
+          {t("Don't have an account?")}{' '}
           <Link to="/register" className="text-primary hover:text-white transition-colors font-medium">
-            Register here
+            {t("Register here")}
           </Link>
         </p>
       </div>

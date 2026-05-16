@@ -1,5 +1,5 @@
 import { useState, useEffect, Fragment } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import { PlayCircle, Lock, CheckCircle, FileText, Star, Clock, BookOpen } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
@@ -12,6 +12,16 @@ export default function CourseDetail() {
   const [course, setCourse] = useState<Course | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeLesson, setActiveLesson] = useState<{ id: string; title: string; video_url: string } | null>(null);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleAuthRequiredAction = (action: () => void) => {
+    if (!user) {
+      navigate('/register', { state: { from: location } });
+      return;
+    }
+    action();
+  };
 
   // Test Modal States
   const [isTestOpen, setIsTestOpen] = useState(false);
@@ -135,13 +145,13 @@ export default function CourseDetail() {
 
           {!hasPurchased ? (
             <div className="flex items-center gap-4">
-              <button className="btn-primary text-lg px-8">
+              <button onClick={() => handleAuthRequiredAction(() => alert("Payment gateway integration pending"))} className="btn-primary text-lg px-8">
                 Buy for ${course.price}
               </button>
               <p className="text-sm text-textMuted">Includes full lifetime access</p>
             </div>
           ) : (
-            <button className="btn-secondary text-lg px-8">
+            <button onClick={() => handleAuthRequiredAction(() => {})} className="btn-secondary text-lg px-8">
               Continue Learning
             </button>
           )}
@@ -161,7 +171,7 @@ export default function CourseDetail() {
             course.lessons.map((lesson, idx) => (
               <div 
                 key={lesson.id} 
-                onClick={() => setActiveLesson(lesson)}
+                onClick={() => handleAuthRequiredAction(() => setActiveLesson(lesson))}
                 className={`p-4 sm:p-6 flex items-center justify-between transition-colors cursor-pointer hover:bg-white/5 ${activeLesson?.id === lesson.id ? 'bg-white/5 border-l-4 border-primary' : ''}`}
               >
                 <div className="flex items-center gap-4">
@@ -188,7 +198,7 @@ export default function CourseDetail() {
               </div>
             </div>
             <button 
-              onClick={() => setIsTestOpen(true)}
+              onClick={() => handleAuthRequiredAction(() => setIsTestOpen(true))}
               className="btn-secondary whitespace-nowrap"
             >
               Start Final Test

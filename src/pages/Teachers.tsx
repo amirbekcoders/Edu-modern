@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Star, BookOpen } from 'lucide-react';
 import { useSettings } from '../contexts/SettingsContext';
+import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabase';
 import type { Teacher } from '../types';
 
@@ -36,7 +37,7 @@ const MOCK_TEACHERS = [
 ];
 
 export default function Teachers() {
-  const { t } = useSettings();
+  const { t } = useTranslation();
   const navigate = useNavigate();
   
   const [teachers, setTeachers] = useState<Teacher[]>([]);

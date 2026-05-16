@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 export const Navbar = () => {
   const { user, signOut } = useAuth();
   const location = useLocation();
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const changeLanguage = (lng: string) => {
     i18n.changeLanguage(lng);
@@ -22,16 +22,16 @@ export const Navbar = () => {
             <BookOpen className="w-6 h-6 text-white" />
           </div>
           <span className="text-xl font-display font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">
-            Anti Gravity
+            Albion Physics
           </span>
         </Link>
 
         <div className="hidden md:flex items-center gap-8">
           <Link to="/courses" className={`text-sm font-medium transition-colors hover:text-primary ${location.pathname === '/courses' ? 'text-primary' : 'text-textMuted'}`}>
-            Courses
+            {t("Courses")}
           </Link>
           <Link to="/teachers" className={`text-sm font-medium transition-colors hover:text-primary ${location.pathname === '/teachers' ? 'text-primary' : 'text-textMuted'}`}>
-            Teachers
+            {t("Teachers")}
           </Link>
         </div>
 
@@ -53,12 +53,12 @@ export const Navbar = () => {
                 {user.role === 'admin' ? (
                   <>
                     <LayoutDashboard className="w-4 h-4" />
-                    Admin Panel
+                    {t("Admin Panel")}
                   </>
                 ) : (
                   <>
                     <User className="w-4 h-4" />
-                    Profile
+                    {t("Profile")}
                   </>
                 )}
               </Link>
@@ -69,10 +69,10 @@ export const Navbar = () => {
           ) : (
             <div className="flex items-center gap-3">
               <Link to="/login" className="text-sm font-medium text-textMuted hover:text-white transition-colors">
-                Login
+                {t("Login")}
               </Link>
               <Link to="/register" className="btn-primary !py-2 !px-4 text-sm">
-                Sign Up
+                {t("Sign Up")}
               </Link>
             </div>
           )}

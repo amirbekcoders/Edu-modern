@@ -240,8 +240,8 @@ export default function AdminDashboard() {
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
                   className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${activeTab === tab.id
-                      ? 'bg-primary text-white shadow-neon'
-                      : 'text-textMuted hover:bg-white/5 hover:text-white'
+                    ? 'bg-primary text-white shadow-neon'
+                    : 'text-textMuted hover:bg-white/5 hover:text-white'
                     }`}
                 >
                   <Icon className="w-5 h-5" />
@@ -285,7 +285,7 @@ export default function AdminDashboard() {
                           <Users className="w-5 h-5" />
                         </div>
                       </div>
-                      <p className="text-sm text-textMuted">Total Users</p>
+                      <p className="text-sm text-textMuted">{t("Total Users")}</p>
                       <p className="text-2xl font-bold">{stats.users}</p>
                     </div>
                     <div className="glass-card p-6 border-white/5">
@@ -294,7 +294,7 @@ export default function AdminDashboard() {
                           <BookOpen className="w-5 h-5" />
                         </div>
                       </div>
-                      <p className="text-sm text-textMuted">Total Courses</p>
+                      <p className="text-sm text-textMuted">{t("Total Courses")}</p>
                       <p className="text-2xl font-bold">{stats.courses}</p>
                     </div>
                   </div>
@@ -304,7 +304,7 @@ export default function AdminDashboard() {
               {activeTab === 'users' && (
                 <div className="space-y-6">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-2xl font-bold font-display">Manage Users</h3>
+                    <h3 className="text-2xl font-bold font-display">{t("Manage Users")}</h3>
                   </div>
 
                   <div className="glass-card overflow-x-auto">
@@ -347,12 +347,12 @@ export default function AdminDashboard() {
               {activeTab === 'courses' && (
                 <div className="space-y-6">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-2xl font-bold font-display">Manage Courses</h3>
+                    <h3 className="text-2xl font-bold font-display">{t("Manage Courses")}</h3>
                     <button
                       onClick={() => { setEditingCourse({}); setIsCourseModalOpen(true); }}
                       className="btn-primary !py-2 !px-4 text-sm"
                     >
-                      <Plus className="w-4 h-4" /> New Course
+                      <Plus className="w-4 h-4" /> {t("New Course")}
                     </button>
                   </div>
 
@@ -511,10 +511,10 @@ export default function AdminDashboard() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-textMuted mb-1">Intro Video URL (Optional)</label>
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   value={editingCourse.video_url || ''}
-                  onChange={e => setEditingCourse({...editingCourse, video_url: e.target.value})}
+                  onChange={e => setEditingCourse({ ...editingCourse, video_url: e.target.value })}
                   className="input-field"
                   placeholder="https://www.youtube.com/watch?v=..."
                 />
@@ -524,49 +524,49 @@ export default function AdminDashboard() {
               <div className="pt-4 border-t border-white/10">
                 <div className="flex items-center justify-between mb-2">
                   <label className="block text-sm font-medium text-textMuted">Course Lessons/Videos</label>
-                  <button 
+                  <button
                     onClick={() => {
                       const newLesson = { id: Date.now().toString(), title: '', video_url: '' };
-                      setEditingCourse({...editingCourse, lessons: [...(editingCourse.lessons || []), newLesson]});
+                      setEditingCourse({ ...editingCourse, lessons: [...(editingCourse.lessons || []), newLesson] });
                     }}
                     className="btn-outline !py-1 !px-2 text-xs flex items-center gap-1"
                   >
                     <Plus className="w-3 h-3" /> Add Video
                   </button>
                 </div>
-                
+
                 <div className="space-y-3 max-h-[300px] overflow-y-auto pr-2">
                   {(editingCourse.lessons || []).map((lesson, idx) => (
                     <div key={lesson.id} className="flex gap-2 items-start bg-surface/50 p-3 rounded-xl border border-white/5">
                       <div className="flex-grow space-y-2">
-                        <input 
-                          type="text" 
+                        <input
+                          type="text"
                           value={lesson.title}
                           onChange={e => {
                             const newLessons = [...(editingCourse.lessons || [])];
                             newLessons[idx].title = e.target.value;
-                            setEditingCourse({...editingCourse, lessons: newLessons});
+                            setEditingCourse({ ...editingCourse, lessons: newLessons });
                           }}
                           className="input-field !py-1 !px-2 !text-sm"
                           placeholder="Lesson Title (e.g., Module 1: Basics)"
                         />
-                        <input 
-                          type="text" 
+                        <input
+                          type="text"
                           value={lesson.video_url}
                           onChange={e => {
                             const newLessons = [...(editingCourse.lessons || [])];
                             newLessons[idx].video_url = e.target.value;
-                            setEditingCourse({...editingCourse, lessons: newLessons});
+                            setEditingCourse({ ...editingCourse, lessons: newLessons });
                           }}
                           className="input-field !py-1 !px-2 !text-sm"
                           placeholder="Video URL (YouTube link or MP4)"
                         />
                       </div>
-                      <button 
+                      <button
                         onClick={() => {
                           const newLessons = [...(editingCourse.lessons || [])];
                           newLessons.splice(idx, 1);
-                          setEditingCourse({...editingCourse, lessons: newLessons});
+                          setEditingCourse({ ...editingCourse, lessons: newLessons });
                         }}
                         className="p-2 text-textMuted hover:text-danger rounded-lg transition-colors"
                       >
