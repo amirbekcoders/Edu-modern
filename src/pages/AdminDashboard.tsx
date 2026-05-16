@@ -110,6 +110,7 @@ export default function AdminDashboard() {
           thumbnail_url: editingCourse.thumbnail_url || '',
           subject_id: editingCourse.subject_id || null,
           teacher_id: editingCourse.teacher_id || null,
+          language: editingCourse.language || 'ru',
         }]).select();
         if (error) throw error;
         if (data) setCourses([data[0] as Course, ...courses]);
@@ -261,6 +262,7 @@ export default function AdminDashboard() {
                       <thead className="bg-surface/50 text-textMuted border-b border-white/10">
                         <tr>
                           <th className="p-4 font-medium">Title</th>
+                          <th className="p-4 font-medium">Language</th>
                           <th className="p-4 font-medium">Price</th>
                           <th className="p-4 font-medium text-right">Actions</th>
                         </tr>
@@ -272,6 +274,7 @@ export default function AdminDashboard() {
                         {courses.map((c) => (
                           <tr key={c.id} className="hover:bg-white/5 transition-colors">
                             <td className="p-4 font-medium">{c.title}</td>
+                            <td className="p-4 uppercase">{c.language || 'N/A'}</td>
                             <td className="p-4">${c.price}</td>
                             <td className="p-4 flex justify-end gap-2">
                               <button 
@@ -380,6 +383,18 @@ export default function AdminDashboard() {
                   className="input-field"
                   placeholder="49.99"
                 />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-textMuted mb-1">Language</label>
+                <select 
+                  value={editingCourse.language || 'ru'}
+                  onChange={e => setEditingCourse({...editingCourse, language: e.target.value as 'uz' | 'ru' | 'en'})}
+                  className="input-field bg-background"
+                >
+                  <option value="uz">O'zbek (Uzbek)</option>
+                  <option value="ru">Русский (Russian)</option>
+                  <option value="en">English (English)</option>
+                </select>
               </div>
               <button onClick={handleSaveCourse} className="btn-primary w-full flex justify-center gap-2">
                 <Save className="w-5 h-5" /> Save Course

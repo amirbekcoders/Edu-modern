@@ -38,9 +38,13 @@ export default function Login() {
     if (error) {
       setError(error.message);
       setLoading(false);
+    } else {
+      // We will wait up to 3 seconds for AuthContext to update the user
+      // If it doesn't, we stop the loading spinner
+      setTimeout(() => {
+        setLoading(false);
+      }, 3000);
     }
-    // No navigate here because AuthContext onAuthStateChange will trigger, update user, and useEffect will navigate
-  };
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center">

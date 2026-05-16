@@ -34,6 +34,7 @@ export interface Course {
   subject_id: string;
   teacher_id: string;
   price: number;
+  language?: 'uz' | 'ru' | 'en'; // Language of the course
   created_at: string;
   teacher?: Teacher;
   subject?: Subject;
