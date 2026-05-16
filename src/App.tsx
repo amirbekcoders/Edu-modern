@@ -22,7 +22,7 @@ function App() {
     <AuthProvider>
       <SettingsProvider>
         <Router>
-          <React.Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-background"><div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div></div>}>
+          <React.Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-background flex-col"><div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div><p className="mt-4">Loading App...</p></div>}>
             <Routes>
               <Route element={<MainLayout />}>
                 <Route path="/" element={<Home />} />

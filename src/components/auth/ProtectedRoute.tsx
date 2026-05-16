@@ -15,8 +15,9 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ allowedRoles }) 
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-background">
         <Loader className="w-8 h-8 animate-spin text-primary" />
+        <p className="mt-4">Loading Auth...</p>
       </div>
     );
   }
