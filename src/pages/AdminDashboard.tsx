@@ -33,6 +33,10 @@ export default function AdminDashboard() {
   // Form states
   const [isCourseModalOpen, setIsCourseModalOpen] = useState(false);
   const [editingCourse, setEditingCourse] = useState<Partial<Course>>({});
+  
+  const [isTeacherModalOpen, setIsTeacherModalOpen] = useState(false);
+  const [editingTeacher, setEditingTeacher] = useState<Partial<Teacher & { user_id_input?: string, full_name_input?: string }>>({});
+  
   const [modalError, setModalError] = useState<string | null>(null);
 
   const fetchData = useCallback(async () => {
@@ -117,7 +121,12 @@ export default function AdminDashboard() {
           language: editingCourse.language || 'ru',
         }]).select();
         if (error) throw error;
-        if (data) setCourses([data[0] as Course, ...courses]);
+        if (data && data.length > 0) {
+          setCourses([data[0] as Course, ...courses]);
+        } else {
+          // If RLS blocked reading it back, just refresh all data
+          fetchData();
+        }
       }
       setIsCourseModalOpen(false);
       setEditingCourse({});
@@ -126,6 +135,46 @@ export default function AdminDashboard() {
       if (err instanceof Error) {
         setModalError(err.message);
         console.error("Save course error:", err);
+      }
+    }
+  };
+
+  const handleSaveTeacher = async () => {
+    try {
+      setModalError(null);
+      // For a new teacher, we need to create or link a user profile first, 
+      // but for simplicity here we just ask for their name and create a fake user ID or expect they exist.
+      // In a real app, you'd select an existing user to make them a teacher.
+      // Let's just insert into teachers table.
+      if (editingTeacher.id) {
+        // Update
+        const { error } = await supabase.from('teachers').update({
+          bio: editingTeacher.bio,
+          experience_years: editingTeacher.experience_years,
+          rating: editingTeacher.rating
+        }).eq('id', editingTeacher.id);
+        if (error) throw error;
+        fetchData(); // Refresh to get relations
+      } else {
+        // Insert
+        // Note: they MUST have a valid user_id in the profiles table.
+        // We'll require user_id for now, or just show an error if it's missing.
+        if (!editingTeacher.user_id) throw new Error("User ID is required to create a teacher.");
+        
+        const { error } = await supabase.from('teachers').insert([{
+          user_id: editingTeacher.user_id,
+          bio: editingTeacher.bio || 'Experienced teacher',
+          experience_years: editingTeacher.experience_years || 1,
+          rating: editingTeacher.rating || 5.0
+        }]);
+        if (error) throw error;
+        fetchData();
+      }
+      setIsTeacherModalOpen(false);
+      setEditingTeacher({});
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setModalError(err.message);
       }
     }
   };
@@ -308,7 +357,13 @@ export default function AdminDashboard() {
               {activeTab === 'teachers' && (
                 <div className="space-y-6">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-2xl font-bold font-display">Manage Teachers</h3>
+                    <h3 className="text-2xl font-bold font-display">{t('Manage Teachers')}</h3>
+                    <button 
+                      onClick={() => { setEditingTeacher({}); setIsTeacherModalOpen(true); }}
+                      className="btn-primary !py-2 !px-4 text-sm"
+                    >
+                      <Plus className="w-4 h-4" /> Add Teacher
+                    </button>
                   </div>
 
                   <div className="glass-card overflow-x-auto">
@@ -412,6 +467,76 @@ export default function AdminDashboard() {
               </div>
               <button onClick={handleSaveCourse} className="btn-primary w-full flex justify-center gap-2">
                 <Save className="w-5 h-5" /> Save Course
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Teacher Modal */}
+      {isTeacherModalOpen && (
+        <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="glass-panel w-full max-w-md p-6 relative">
+            <button 
+              onClick={() => { setIsTeacherModalOpen(false); setModalError(null); }}
+              className="absolute top-4 right-4 text-textMuted hover:text-white"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            <h3 className="text-xl font-bold mb-6">{editingTeacher.id ? 'Edit Teacher' : 'New Teacher'}</h3>
+            
+            {modalError && (
+              <div className="bg-danger/10 border border-danger/20 text-danger px-4 py-3 rounded-xl mb-6 text-sm">
+                {modalError}
+              </div>
+            )}
+            
+            <div className="space-y-4">
+              {!editingTeacher.id && (
+                <div>
+                  <label className="block text-sm font-medium text-textMuted mb-1">User ID (from Users tab)</label>
+                  <input 
+                    type="text" 
+                    value={editingTeacher.user_id || ''}
+                    onChange={e => setEditingTeacher({...editingTeacher, user_id: e.target.value})}
+                    className="input-field"
+                    placeholder="Enter user UUID"
+                  />
+                  <p className="text-xs text-textMuted mt-1">To add a teacher, first find their User ID in the Users tab.</p>
+                </div>
+              )}
+              <div>
+                <label className="block text-sm font-medium text-textMuted mb-1">About (Bio)</label>
+                <textarea 
+                  value={editingTeacher.bio || ''}
+                  onChange={e => setEditingTeacher({...editingTeacher, bio: e.target.value})}
+                  className="input-field min-h-[100px]"
+                  placeholder="Information about the teacher..."
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-textMuted mb-1">Experience (Years)</label>
+                  <input 
+                    type="number" 
+                    value={editingTeacher.experience_years || ''}
+                    onChange={e => setEditingTeacher({...editingTeacher, experience_years: parseInt(e.target.value)})}
+                    className="input-field"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-textMuted mb-1">Rating</label>
+                  <input 
+                    type="number" 
+                    step="0.1"
+                    value={editingTeacher.rating || ''}
+                    onChange={e => setEditingTeacher({...editingTeacher, rating: parseFloat(e.target.value)})}
+                    className="input-field"
+                  />
+                </div>
+              </div>
+              <button onClick={handleSaveTeacher} className="btn-primary w-full flex justify-center gap-2">
+                <Save className="w-5 h-5" /> Save Teacher
               </button>
             </div>
           </div>
