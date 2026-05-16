@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Star, BookOpen } from 'lucide-react';
-import { useSettings } from '../contexts/SettingsContext';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '../lib/supabase';
 import type { Teacher } from '../types';

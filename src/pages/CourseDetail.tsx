@@ -1,5 +1,5 @@
-import { useState, useEffect, Fragment } from 'react';
-import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { PlayCircle, Lock, CheckCircle, FileText, Star, Clock, BookOpen } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
