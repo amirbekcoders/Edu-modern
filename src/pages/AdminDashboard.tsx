@@ -66,9 +66,14 @@ export default function AdminDashboard() {
         if (error) throw error;
         setUsers(data as User[] || []);
       } else if (activeTab === 'courses') {
-        const { data, error } = await supabase.from('courses').select('*, teacher:teachers(*)').order('created_at', { ascending: false }).limit(1000);
-        if (error && error.code !== '42P01') throw error;
-        setCourses(data as Course[] || []);
+        const [coursesRes, teachersRes] = await Promise.all([
+          supabase.from('courses').select('*, teacher:teachers(*)').order('created_at', { ascending: false }).limit(1000),
+          supabase.from('teachers').select('*').order('created_at', { ascending: false })
+        ]);
+        if (coursesRes.error && coursesRes.error.code !== '42P01') throw coursesRes.error;
+        if (teachersRes.error && teachersRes.error.code !== '42P01') throw teachersRes.error;
+        setCourses(coursesRes.data as Course[] || []);
+        setTeachers(teachersRes.data as Teacher[] || []);
       } else if (activeTab === 'teachers') {
         const { data, error } = await supabase.from('teachers').select('*').order('created_at', { ascending: false }).limit(1000);
         if (error && error.code !== '42P01') throw error;
